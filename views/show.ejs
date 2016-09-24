@@ -1,6 +1,18 @@
-<h1>Show template!</h1>
+<% include partials/header %>
+
+<h1>campground.name</h1>
 
 <p>
-    <%= campgrounds.name %>
-    
+    <%= campground.name %>
 </p>
+<img src="<%= campground.image %>">
+
+<%= campground.description %>
+
+<% campground.comments.forEach(function(comment){  %>
+    <p><strong><%= comment.author %></strong> - <%= comment.text %>
+    
+    </p>
+
+<% }) %>
+<% include partials/footer %>
