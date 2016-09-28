@@ -32,7 +32,7 @@ router.get("/campgrounds/:id", function(req, res){
     });
 });
 
-//CRESTE - add new campground to DB
+//CREATE - add new campground to DB
 router.post("/campgrounds", isLoggedIn, function(req,res){
    //get data from form and add to campgrounds array
     var name = req.body.name;
@@ -53,6 +53,48 @@ router.post("/campgrounds", isLoggedIn, function(req,res){
            res.redirect("/campgrounds");
        }
    });
+});
+
+//EDIT PAGE ROUTE
+router.get("/campgrounds/:id/edit", function(req, res){
+    if(req.isAuthenticated()){
+        CampgroundDB.findById(req.params.id, function(err, foundCampground){
+        
+        if(err){
+            res.redirect("/campgrounds")
+        } else {
+            res.render("campgrounds/edit", {campground: foundCampground});
+        }
+    });
+            
+    } else {
+        console.log("You need to be logged in todo that!");
+        res.send("You need to be logged in todo that!");
+    }
+    
+});
+
+//UPDATE ROUTE
+router.put("/campgrounds/:id", function(req, res){
+   //find and update the correct campgro
+   CampgroundDB.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
+       if(err){
+           res.redirect("/campgrounds");
+       } else {
+           res.redirect("/campgrounds/" +req.params.id);
+       }
+   });
+});
+
+//DESTROY ROUTE
+router.delete("/campgrounds/:id", function(req, res){
+    CampgroundDB.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            res.redirect("/campgrounds");
+        } else {
+            res.redirect("/campgrounds");
+        }
+    })
 });
 
 //middleware
