@@ -56,22 +56,10 @@ router.post("/campgrounds", isLoggedIn, function(req,res){
 });
 
 //EDIT PAGE ROUTE
-router.get("/campgrounds/:id/edit", function(req, res){
-    if(req.isAuthenticated()){
+router.get("/campgrounds/:id/edit", checkCampgroundOwnership, function(req, res){
         CampgroundDB.findById(req.params.id, function(err, foundCampground){
-        
-        if(err){
-            res.redirect("/campgrounds")
-        } else {
             res.render("campgrounds/edit", {campground: foundCampground});
-        }
     });
-            
-    } else {
-        console.log("You need to be logged in todo that!");
-        res.send("You need to be logged in todo that!");
-    }
-    
 });
 
 //UPDATE ROUTE
@@ -87,14 +75,14 @@ router.put("/campgrounds/:id", function(req, res){
 });
 
 //DESTROY ROUTE
-router.delete("/campgrounds/:id", function(req, res){
+router.delete("/campgrounds/:id", checkCampgroundOwnership, function(req, res){
     CampgroundDB.findByIdAndRemove(req.params.id, function(err){
         if(err){
             res.redirect("/campgrounds");
         } else {
             res.redirect("/campgrounds");
         }
-    })
+    });
 });
 
 //middleware
@@ -104,4 +92,28 @@ function isLoggedIn(req, res, next){
     }
     res.redirect("/login");
 }
+
+function checkCampgroundOwnership(req, res, next){
+    if(req.isAuthenticated()){
+        CampgroundDB.findById(req.params.id, function(err, foundCampground){
+            if(err){
+                res.redirect("back");
+            } else {
+                //check if User owns the object?
+                console.log(foundCampground.author.id); //mongoose object
+                console.log(req.user._id); //string
+                if(foundCampground.author.id.equals(req.user._id)){
+                    next();
+                } else {
+                    res.redirect("back");
+                }
+                
+            }
+    });
+            
+    } else {
+        res.redirect("back");
+    }
+}
+
 module.exports = router;
