@@ -10,7 +10,9 @@ var express= require("express"),
     User = require("./models/user"),
     seedDB = require("./seeds");
     
-mongoose.connect("mongodb://localhost/camp");    
+//mongoose.connect("mongodb://localhost/camp");   
+
+mongoose.connect("mongodb://admin:password@ds039195.mlab.com:39195/campstest");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine","ejs");
 app.use(express.static(__dirname + "/public"));
