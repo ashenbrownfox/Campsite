@@ -11,8 +11,9 @@ var express= require("express"),
     seedDB = require("./seeds");
     
 //mongoose.connect("mongodb://localhost/camp");   
-
 mongoose.connect("mongodb://admin:password@ds039195.mlab.com:39195/campstest");
+console.log(process.env.DATABASEURL);
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine","ejs");
 app.use(express.static(__dirname + "/public"));
