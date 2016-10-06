@@ -2,12 +2,13 @@ var express = require("express");
 var router = express.Router();
 var CampgroundDB = require("../models/campground");
 var Comment = require("../models/comment");
+var middleware = require("../middleware/index.js");
 //=====================================
 //COMMENTS ROUTES
 //=====================================
 
 //comments new
-router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res){
+router.get("/campgrounds/:id/comments/new", middleware.isLoggedIn, function(req, res){
     CampgroundDB.findById(req.params.id, function(err, campground){
         if(err){
             console.log(err);
@@ -20,7 +21,7 @@ router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req, res){
 
 
 //comments create
-router.post("/campgrounds/:id/comments", isLoggedIn, function(req, res){
+router.post("/campgrounds/:id/comments", middleware.isLoggedIn, function(req, res){
     CampgroundDB.findById(req.params.id, function(err, campground){
        if(err){
            console.log(err);
@@ -50,7 +51,7 @@ router.post("/campgrounds/:id/comments", isLoggedIn, function(req, res){
 })
 
 //COmments edit route
-router.get("/campgrounds/:id/comments/:comment_id/edit", function(req, res){
+router.get("/campgrounds/:id/comments/:comment_id/edit", middleware.checkCommentOwnership,function(req, res){
     Comment.findById(req.params.comment_id, function(err, foundComment){
         if(err){
             res.redirect("back");
@@ -74,7 +75,7 @@ router.put("/campgrounds/:id/comments/:comment_id", function(req, res){
 
 //Comment DESTROY ROUTE
 //route /campgrounds/Lid/comments/:comments_id
-router.delete("/campgrounds/:id/comments/:comment_id", function(req,res){
+router.delete("/campgrounds/:id/comments/:comment_id", middleware.checkCommentOwnership, function(req,res){
     Comment.findByIdAndRemove(req.params.comment_id, function(err){
         if(err){
             res.redirect("back");
@@ -84,12 +85,7 @@ router.delete("/campgrounds/:id/comments/:comment_id", function(req,res){
     });
 });
 
-//middleware
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect("/login");
-}
+
+
 
 module.exports = router;

@@ -13,8 +13,6 @@ var express= require("express"),
     
 var url = process.env.DATABASEURL || "mongodb://localhost/camp"  
 mongoose.connect(url);
-//mongoose.connect("mongodb://localhost/camp");   
-//mongoose.connect("mongodb://admin:password@ds039195.mlab.com:39195/campstest");
 console.log("The DATABASEURL environment variable is: "+url);
 
 app.use(bodyParser.urlencoded({extended: true}));
